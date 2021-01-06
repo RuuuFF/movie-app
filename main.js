@@ -1,4 +1,4 @@
-const API_URL = 'https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=d6de4e7bc20889decc71162a1b451efe&page=1'
+const API_URL = 'https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=d6de4e7bc20889decc71162a1b451efe&page='
 const IMG_PATH = 'https://image.tmdb.org/t/p/w1280'
 // w1280 = width: 1280px
 const SEARCH_API = 'https://api.themoviedb.org/3/search/movie?api_key=d6de4e7bc20889decc71162a1b451efe&query="'
@@ -7,8 +7,10 @@ const form = document.getElementById('form')
 const search = document.getElementById('search')
 const main = document.getElementById('main')
 
-// Get initial movies
-getMovies(API_URL)
+let page = '1'
+
+// Chama os filmes iniciais
+getMovies(API_URL + page)
 
 async function getMovies(url) {
   const res = await fetch(url)
@@ -61,15 +63,115 @@ form.addEventListener('submit', event => {
 })
 
 
-// Botão search
+// Botão "search" e "get random page"
 const search_container = document.querySelector('.search-container');
 const btn = document.querySelector('.btn');
+const randomPage = document.getElementById('random-page')
+const randomMovie = document.getElementById('random-movie')
+
 
 btn.addEventListener('click', () => {
   search_container.classList.toggle('active');
-  if (search_container.classList.contains('active')) search.focus();
+  if (search_container.classList.contains('active')) {
+    search.focus();
+    if (document.body.clientWidth <= 580) {
+      randomPage.classList.add('hidden')
+    } else { 
+      randomPage.classList.remove('hidden')
+    }
+  }
 });
 
+
 search.addEventListener('blur', () => {
-  if (search.value === '') search_container.classList.remove('active')
+  if (search.value === '') { search_container.classList.remove('active')
+    randomPage.classList.remove('hidden')
+  }
 })
+
+
+// Adiciona um ouvidor de eventos do tipo clique no botão "randomPage"
+randomPage.addEventListener('click', () => {
+  // Chama a função "clearRandomMovie"
+  clearRandomMovie()
+  
+  // Atribui a page algum valor aleatório entre 0 e 50
+  page = Math.floor(Math.random() * 50) 
+  
+  // Chama a função "getMovies" passando o valor de "API_URL" + "page"
+  getMovies(API_URL + page)
+})
+
+
+// Adiciona um ouvidor de eventos no botão "random-movie"
+randomMovie.addEventListener('click', randomSelect)
+
+
+// Função "clearRandomMovie"
+function clearRandomMovie() {
+  // Pega todos os elementos com a classe ".movie"
+  const movies = document.querySelectorAll('.movie')
+  // Remove a classe "highlight" dos itens dentro de "movies"
+  movies.forEach(movie => movie.classList.remove('highlight'))
+}
+
+
+// Função que seleciona o filme com uma "animação"
+function randomSelect() {
+  // Chama a função "clearRandomMovie"
+  clearRandomMovie()
+  
+  // Seta o tempo como 30ms
+  const time = 30
+  
+  // Executa uma função a cada intervalo de 100ms na variável "interval"
+  const interval = setInterval(() => {
+    // Chama a função "pickRandomMovie" e armazena o valor do seu retorno em "randomMovie"
+    const randomMovie = pickRandomMovie()
+    
+    // Chama a função "highlightMovie" com o retorno de "randomMovie"
+    highlightMovie(randomMovie)
+    
+    // Chama a função "unHighlightMovie" passando o retorno de "randomMovie"
+    setTimeout(() => unHighlightMovie(randomMovie), 100)
+  }, 100)
+  
+  // Executa a função após "time * 100" (valor de time (que é 30) * 100)
+  setTimeout(() => {
+    // Interrompe o intervalo de "interval"
+    clearInterval(interval)
+    
+    // Executa uma função após 100ms
+    setTimeout(() => {
+      // Chama a função "pickRandomMovie" e armazena o valor do seu retorno em "randomMovie"
+      const randomMovie = pickRandomMovie()
+      
+      // Chama "highlightMovie" com o valor de "randomMovie"
+      highlightMovie(randomMovie)
+      
+      // Faz a tela rolar até o elemento selecionado
+      randomMovie.scrollIntoView()
+    }, 100)
+  }, time * 100)
+}
+
+
+// Função que seleciona alguma tag aleatória com a classe "movie"
+function pickRandomMovie() {
+  // Pega todos os elementos com a classe "movie" do documento
+  const movies = document.querySelectorAll('.movie')
+
+  // Retorna algum item de "movies" tendo seu índice como um número aleatório entre 0 e o comprimeiro de "movies"
+  return movies[Math.floor(Math.random() * movies.length)]
+}
+
+
+// Função que adiciona a classe "highlight"
+function highlightMovie(movie) {
+  movie.classList.add('highlight')
+}
+
+// Função que remove a classe "highlight"
+function unHighlightMovie(movie) {
+  movie.classList.remove('highlight')
+}
