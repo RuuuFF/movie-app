@@ -63,6 +63,7 @@ form.addEventListener('submit', event => {
 })
 
 
+
 // Botão "search" e "get random page"
 const search_container = document.querySelector('.search-container');
 const btn = document.querySelector('.btn');
@@ -70,20 +71,30 @@ const randomPage = document.getElementById('random-page')
 const randomMovie = document.getElementById('random-movie')
 
 
+// Adiciona um ouvidor de eventos do tipo clique em "btn"
 btn.addEventListener('click', () => {
+  // Alterna (coloca/tira) a classe "active" em "search_container"
   search_container.classList.toggle('active');
+  
+  // Se "search_container" tiver a classe "active", o input "search" ganha foco
   if (search_container.classList.contains('active')) {
     search.focus();
+    
+    // Se a tela do documento for menor que 580 (pixel), ele entra
     if (document.body.clientWidth <= 580) {
+      // Adiciona a classe "hidden" em "randomPage"
       randomPage.classList.add('hidden')
-    } else { 
+    } else {
+      // Se não, remove
       randomPage.classList.remove('hidden')
     }
   }
 });
 
 
+// Aficiona ou ouvidor de eventos do tipo "blur" no input 'search' (quando perde o foco)
 search.addEventListener('blur', () => {
+  // Se "search" for igual a "" (nada) ele entra e remove a classe active de "search_container" e remove a classe "hidden" de "randomPage"
   if (search.value === '') { search_container.classList.remove('active')
     randomPage.classList.remove('hidden')
   }
@@ -95,8 +106,10 @@ randomPage.addEventListener('click', () => {
   // Chama a função "clearRandomMovie"
   clearRandomMovie()
   
-  // Atribui a page algum valor aleatório entre 0 e 50
-  page = Math.floor(Math.random() * 50) 
+  // Atribui a page algum valor aleatório entre 1 e 50
+  page = Math.floor(Math.random() * 50) + 1
+  // Adiciona o número da página ao título
+  document.getElementsByTagName('title')[0].innerText = `Movie App - ${page}`
   
   // Chama a função "getMovies" passando o valor de "API_URL" + "page"
   getMovies(API_URL + page)
@@ -135,6 +148,7 @@ function randomSelect() {
     // Chama a função "unHighlightMovie" passando o retorno de "randomMovie"
     setTimeout(() => unHighlightMovie(randomMovie), 100)
   }, 100)
+  
   
   // Executa a função após "time * 100" (valor de time (que é 30) * 100)
   setTimeout(() => {
