@@ -1,6 +1,9 @@
+// Atribui a "API_URL" o link da api (sem o número da página)  
 const API_URL = 'https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=d6de4e7bc20889decc71162a1b451efe&page='
-const IMG_PATH = 'https://image.tmdb.org/t/p/w1280'
+// Atribui a "IMG_PATH" a url para fazer a busca pela imagem (o "código" da imagem será concatenada mais tarde)
 // w1280 = width: 1280px
+const IMG_PATH = 'https://image.tmdb.org/t/p/w1280'
+// Atribui a "SEARCH_API" a url para fazer as pesquisas (o termo procurado vais ser concatenado no final)
 const SEARCH_API = 'https://api.themoviedb.org/3/search/movie?api_key=d6de4e7bc20889decc71162a1b451efe&query="'
 
 const form = document.getElementById('form')
@@ -9,25 +12,45 @@ const main = document.getElementById('main')
 
 let page = '1'
 
-// Chama os filmes iniciais
+// Chama a função assim que a página é carregada passando "API_URL" + "page" (que tem o valor de '1')
 getMovies(API_URL + page)
 
+
+// Função "getMovies"
 async function getMovies(url) {
+  // Faz um HTTP request passando a url
   const res = await fetch(url)
+  // Trata o resultado
   const data = await res.json()
   
+  console.log(data)
+  
+  // Chama a função "showMovies" passando o objeto "data.results" ("results" é um array com objetos dentro)
   showMovies(data.results)
 }
 
+
+// Função "showMovies" que recebe "data.results" como "movies"
 function showMovies(movies) {
+  // Limpa tudo que tem dentro do elemento "main"
   main.innerHTML = ''
   
+  // Executa uma função cada item dentro do array "movies"
   movies.forEach(movie => {
+    // Pega "title", "poster_path", "vote_average" e "overview" de dentro de movie, os "transformando" em uma variável
     const { title, poster_path, vote_average, overview } = movie
     
+    // Cria uma tag "div"
     const movieEl = document.createElement('div')
+    // Adiciona a classe "movie" ao elemento criado
     movieEl.classList.add('movie')
     
+    // Adiciona HTML dentro da div criada
+    // Na imagem ele ele utiliza "IMG_PATH" com "poster_path" para acessar a url da imagem e "title" para o alt
+    // "title" insere o título do item
+    // Chama a função "getClassByRate" passando "vote_average", que, dependendo do valor, retorna a classe (red, orange ou green)
+    // Insere "vote_average" no campo "span"
+    // Adiciona o texto contido em "overview"
     movieEl.innerHTML = `
       <img src="${IMG_PATH + poster_path}" alt="${title}"/>
       <div class="movie-info">
@@ -40,24 +63,38 @@ function showMovies(movies) {
       </div>
     `
     
+    // Adiciona "movieEl" criado na tag "main"
     main.appendChild(movieEl)
+    
+    // Irá repetir isso em todos os itens dentro do array
   })
 }
 
+// Função "getClassByRate" que recebe "vote_average" na chamada onde cria os itens
 function getClassByRate(vote) {
+  // Se vote for maior ou igual a 8, retorna 'green'
   if(vote >= 8) return 'green'
+  // Se for maior ou igual a 5, retorna 'orange'
   else if(vote >= 5) return 'orange'
+  // Se não for nenhuma das duas condições, retorna 'red'
   else return 'red'
 }
 
+// Adiciona um ouvidor de eventos do tipo "submit" no formulário, passando seu evento
 form.addEventListener('submit', event => {
+  // Cancela o evento
   event.preventDefault()
+  // Pega o valor dentro de "search" e o atribui para a variável "searchTerm"
   const searchTerm = search.value
   
+  // Se "searchTerm" tiver algum valor, retorna true E (&&) "searchTerm" não for igual a "''" (nada), retorna true
   if(searchTerm && searchTerm !== '') {
+    // Chama a função "getMovies" passando "SEARCH_API" + "searchTerm"
     getMovies(SEARCH_API + searchTerm)
+    // Limpa o valor dentro de "search"
     search.value = ''
   } else {
+    // Recarrega a página
     window.location.reload()
   }
 })
