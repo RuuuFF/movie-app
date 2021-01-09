@@ -1,9 +1,9 @@
 // Atribui a "API_URL" o link da api (sem o número da página)  
 const API_URL = 'https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=d6de4e7bc20889decc71162a1b451efe&page='
-// Atribui a "IMG_PATH" a url para fazer a busca pela imagem (o "código" da imagem será concatenada mais tarde)
+// Atribui a "IMG_PATH" a url para fazer a busca pela imagem (o "código" da imagem será concatenado mais tarde)
 // w1280 = width: 1280px
 const IMG_PATH = 'https://image.tmdb.org/t/p/w1280'
-// Atribui a "SEARCH_API" a url para fazer as pesquisas (o termo procurado vais ser concatenado no final)
+// Atribui a "SEARCH_API" a url para fazer as pesquisas (o termo procurado vai ser concatenado no final)
 const SEARCH_API = 'https://api.themoviedb.org/3/search/movie?api_key=d6de4e7bc20889decc71162a1b451efe&query="'
 
 const form = document.getElementById('form')
@@ -25,7 +25,7 @@ async function getMovies(url) {
   
   console.log(data)
   
-  // Chama a função "showMovies" passando o objeto "data.results" ("results" é um array com objetos dentro)
+  // Chama a função "showMovies" passando o objeto "data.results" ("results" é um array com objetos dentro dele)
   showMovies(data.results)
 }
 
@@ -35,14 +35,14 @@ function showMovies(movies) {
   // Limpa tudo que tem dentro do elemento "main"
   main.innerHTML = ''
   
-  // Executa uma função cada item dentro do array "movies"
+  // Executa uma função para cada item dentro do array "movies"
   movies.forEach(movie => {
-    // Pega "title", "poster_path", "vote_average" e "overview" de dentro de movie, os "transformando" em uma variável
+    // Pega os objetos "title", "poster_path", "vote_average" e "overview" de dentro de "movie", os "transformando" em uma variável
     const { title, poster_path, vote_average, overview } = movie
     
     // Cria uma tag "div"
     const movieEl = document.createElement('div')
-    // Adiciona a classe "movie" ao elemento criado
+    // Adiciona a classe "movie" ao elemento div criado
     movieEl.classList.add('movie')
     
     // Adiciona HTML dentro da div criada
@@ -79,6 +79,7 @@ function getClassByRate(vote) {
   // Se não for nenhuma das duas condições, retorna 'red'
   else return 'red'
 }
+
 
 // Adiciona um ouvidor de eventos do tipo "submit" no formulário, passando seu evento
 form.addEventListener('submit', event => {
@@ -153,7 +154,7 @@ randomPage.addEventListener('click', () => {
 })
 
 
-// Adiciona um ouvidor de eventos no botão "random-movie"
+// Adiciona um ouvidor de eventos no botão "random-movie" que chama a função "randomSelect" (sem o "()" ele não irá chamar ao carregar a página)
 randomMovie.addEventListener('click', randomSelect)
 
 
@@ -182,7 +183,7 @@ function randomSelect() {
     // Chama a função "highlightMovie" com o retorno de "randomMovie"
     highlightMovie(randomMovie)
     
-    // Chama a função "unHighlightMovie" passando o retorno de "randomMovie"
+    // Chama a função "unHighlightMovie" passando o mesmo retorno de "randomMovie"
     setTimeout(() => unHighlightMovie(randomMovie), 100)
   }, 100)
   
